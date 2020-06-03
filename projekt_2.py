@@ -104,3 +104,5 @@ class simualtion:
 			asteroid_acceleration_x = np.zeros(shape=(number_of_asteroids)) #czyszczenie przypieszeń po kroku
 			asteroid_acceleration_y = np.zeros(shape=(number_of_asteroids))
 			#kolizje ogarnie się potem
+		
+		
