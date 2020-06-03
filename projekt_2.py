@@ -1,108 +1,98 @@
 import numpy as np
 import scipy
-import math
+import math as m
+import turtle
+import random
+import time
 
-number_of_asteroids = 1000
+wn=turtle.Screen()
+wn.setup(width=1920,height=1200)
+wn.bgcolor("black")
+wn.title("Apocalypse Simulation")
 
-class vector: # wektor euklidesowy dla oddziaływań Słońce-Ziemia-Księżyc
-	x = float()
-	y = float()
+m_sun=5
+m_moon=1
+m_earth=2
+m_asteroid=0.1
 
-	def __init__(x_arg: float, y_arg: float):
-		x, y = x_arg, y_arg
+moon = turtle.Turtle()
 
-	def __init__():
-		x, y = 0, 0
+radius=90
+sun_distance=400
+moon.shape("circle")
+moon.color("gray")
+moon.resizemode()
+moon.shapesize(stretch_wid=1, stretch_len=1)
+moon.penup()
+moon.speed(0)
+moon.goto(-radius-sun_distance,0)
 
-	def lenght():
-		return math.hypot(x,y)
+earth = turtle.Turtle()
 
-	def __add__(self, vec2):
-		return vector(self.x + vec2.x, self.y + vec2.y)
-	
-	def __sub__(self, vec2):
-		return vector(self.x - vec2.x, self.y - vec2.y)
-
-	def __iadd__(self, vec2):
-		temp = self + vec2
-		x = temp.x
-		y = temp.y
-		return temp
-	
-	def __isub__(self, vec2):
-		temp = self - vec2
-		x = temp.x
-		y = temp.y
-		return temp
-
-	def __mul__(self, multipier: float):
-		return vector(self.x * multipier, self.y * multipier)
-
-	def __div__(self, divisor: float):
-		return vector(self.x / divisor, self.y / divisor)
+earth.shape("circle")
+earth.color("blue")
+earth.resizemode()
+earth.shapesize(stretch_wid=2.3, stretch_len=2.3)
+earth.penup()
+earth.speed(0)
+earth.goto(-sun_distance,0)
 
 
-class celestial_body: # ciało Słońce/Ziemia/Księżyc
-	position : vector
-	velocity : vector
-	acceleration : vector
-	sgp = 0. # standardowy parametr grawitacyjny
-	radius = 0.
+sun = turtle.Turtle()
+sun.shape("circle")
+sun.color("yellow")
+sun.resizemode()
+sun.shapesize(stretch_wid=5, stretch_len=5)
+sun.penup()
+sun.speed(0)
+sun.goto(0,0)
 
-	def interact(self, cb2):
-		vec_to_cb2 = cb2.position - self.position
-		distance = (self.position - cb2.position).lenght()
-		acceleration += vec_to_cb2 * sgp / distance ** 3
+turtle
+angle=0
+sun_angle=0
+turtle
+area_width=[-900,earth.xcor()]
+area_height=[-500,500]
 
-	def update():
-		velocity += acceleration
-		position += velocity
-		acceleration = vector(0.,0.)
+def moon_xforce(x,alpha=10**3):
+    return (alpha/((asteroid.xcor()-x)**2+(asteroid.ycor()-moon.ycor())**2)**1.5)*(-asteroid.xcor()+x)
+def earth_xforce(x,beta=2*10**3):
+    return (beta/((asteroid.xcor()-x)**2+(asteroid.ycor()-earth.ycor())**2)**1.5)*(-asteroid.xcor()+x)
+def sun_xforce(x,gamma=5*10**3):
+    return (gamma/((asteroid.xcor()-x)**2+(asteroid.ycor()-sun.ycor())**2)**1.5)*(-asteroid.xcor()+x)
+def moon_yforce(y,alpha=10**3):
+    return (alpha/((asteroid.xcor()-y)**2+(asteroid.ycor()-moon.ycor())**2)**1.5)*(-asteroid.ycor()+y)
+def earth_yforce(y,beta=2*10**3):
+    return (beta/((asteroid.xcor()-y)**2+(asteroid.ycor()-earth.ycor())**2)**1.5)*(-asteroid.ycor()+y)
+def sun_yforce(y,gamma=5*10**3):
+    return (gamma/((asteroid.xcor()-y)**2+(asteroid.ycor()-sun.ycor())**2)**1.5)*(-asteroid.ycor()+y)
 
+y=random.uniform(area_height[0], area_height[1])
+x=random.uniform(area_width[0], area_width[1])
 
+asteroid = turtle.Turtle()
+asteroid.shape("circle")
+asteroid.color("red")
+asteroid.resizemode()
+asteroid.shapesize(stretch_wid=0.3, stretch_len=0.3)
+asteroid.penup()
+asteroid.speed(0)
+asteroid.goto(x,y)
 
-class simualtion:
-	asteroid_x = np.zeros(shape=(number_of_asteroids)) # numpy array'e asteroidów wrzuci się do oddzielnej klasy
-	asteroid_y = np.zeros(shape=(number_of_asteroids))
-	asteroid_velocity_x = np.zeros(shape=(number_of_asteroids))
-	asteroid_velocity_y = np.zeros(shape=(number_of_asteroids))
-	asteroid_acceleration_x = np.zeros(shape=(number_of_asteroids))
-	asteroid_acceleration_y = np.zeros(shape=(number_of_asteroids))
-	Earth : celestial_body
-	Sun : celestial_body
-	Moon : celestial_body
-	collision_angles = []
-	asteroid_collision_mask = np.ones(shape=(number_of_asteroids)) # maska do oznaczania, czy asteroida uderzyła w ciało
+moon.dangle=0.036
+earth.dangle=0.003
+asteroid.dx=0
+asteroid.dy=0
+while True:
+    asteroid.dx+= moon_xforce(moon.xcor())+earth_xforce(earth.xcor())+sun_xforce(sun.xcor())
+    asteroid.dy+= moon_yforce(moon.ycor())+earth_yforce(earth.ycor())+sun_yforce(sun.ycor())
+    asteroid.setx(asteroid.xcor()+asteroid.dx)
+    asteroid.sety(asteroid.ycor()+asteroid.dy)
+    moon.setx(earth.xcor()+radius*m.cos(angle))
+    moon.sety(earth.ycor()+radius*m.sin(angle))
+    earth.setx(sun.xcor()-sun_distance*m.cos(sun_angle))
+    earth.sety(sun.ycor()-sun_distance*m.sin(sun_angle))
+    sun_angle=sun_angle+earth.dangle
+    angle=angle+moon.dangle
 
-	def __init__():
-		# tu będzie implementacja rozmieszczania ciał niebieskich i asteroid
-		return
-
-	def simulate(): # główna metoda symulacji
-		while True: #warunek przzerwania symulacji zostanie dodany potem
-			#interakcje grawitacyjne ciał
-			Earth.interact(Sun)
-			Earth.interact(Moon)
-			Sun.interact(Earth) # można by przykleić Słońce w punkcie (0,0), do rozważenia
-			Sun.interact(Moon)
-			Moon.interact(Earth)
-			Moon.interact(Sun)
-			for body in [Sun, Earth, Moon]:
-				asteroid_vec_to_body_x = numpy.full((number_of_asteroids), body.position.x) - asteroid_x
-				asteroid_vec_to_body_y = numpy.full((number_of_asteroids), body.position.y) - asteroid_y
-				asteroid_distance = np.hypot(asteroid_vec_to_body_x, asteroid_vec_to_body_y)
-				asteroid_acceleration_x += asteroid_vec_to_body_x * body.sgp / asteroid_distance ** 3
-				asteroid_acceleration_y += asteroid_vec_to_body_y * body.sgp / asteroid_distance ** 3
-			#aktualizacje pozycji
-			Earth.update()
-			Moon.update()
-			Sun.update()
-			asteroid_velocity_x += asteroid_acceleration_x
-			asteroid_velocity_y += asteroid_acceleration_y
-			asteroid_x += asteroid_velocity_x
-			asteroid_y += asteroid_velocity_y
-			asteroid_acceleration_x = np.zeros(shape=(number_of_asteroids)) #czyszczenie przypieszeń po kroku
-			asteroid_acceleration_y = np.zeros(shape=(number_of_asteroids))
-			#kolizje ogarnie się potem
-		
-		
+wn.mainloop()
