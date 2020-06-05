@@ -96,3 +96,6 @@ while True:
     angle=angle+moon.dangle
 
 wn.mainloop()
+
+x
+
